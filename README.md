@@ -1,4 +1,4 @@
-Foked to trg to adding copy/paste function.
+**Foked to try adding copy/paste function.**
 
 Live demo: [link](jumpjack.github.io/viceLC.js/copypaste.html)
 
@@ -6,6 +6,7 @@ Known issues:
 - no special characters supported
 - textarea does not get focus, so keybaord sends keys directly to emulator; use right mouse button to paste new data into textarea
 
+-------------
 
 VICE.js
 =======
