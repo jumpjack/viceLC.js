@@ -1,3 +1,6 @@
+>> trying to add copy/paste function
+
+
 VICE.js
 =======
 
