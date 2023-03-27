@@ -1,4 +1,6 @@
->> trying to add copy/paste function
+Foked to trg to adding copy/paste function.
+
+
 
 
 VICE.js
