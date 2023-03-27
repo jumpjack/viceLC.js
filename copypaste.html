@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-us">
+  <body>
+    <!-- the canvas *must not* have any border or padding, or mouse coords will be wrong -->
+    Fork of <a href="https://github.com/rjanicek/vice.js">rjanicek/vice.js</a> attempting to implement copy/paste<br>
+    References:<br>
+    <a href="https://www.pagetable.com/c64ref/charset/">Char codes - 1</a><br>
+    <a href=https://c64os.com/post/keymap_toscreeneditor">Char codes - 2</a><br>
+    <canvas  id="canvas" style="border: 0px none;"></canvas><br>
+    <textarea id="input" cols=100 rows=5>test:&amp;&lt;&gt;&quot;
+    </textarea><br>
+    <button onclick="sendInput()">Paste</button>
+    <script type="text/javascript">
+////////// Currently only working for standard characters                                  
+      var Module = {
+        arguments: ['+sound'],
+        canvas: document.getElementById('canvas'),
+      };
+
+      function sendInput() {
+        var text = document.getElementById("input").value;
+console.log("To print:", text);
+        for (var i = 0; i < text.length; i++) {
+                 var charCode = text.charCodeAt(i);
+console.log("     Elaboro: ", i,charCode);
+                    if (charCode >= 65 && charCode <= 90) {
+                        // upper case letter
+                        codeToSend = charCode + 32;
+                    } else if (charCode >= 97 && charCode <= 122) {
+                        // lower case letter
+                        codeToSend = charCode;
+                    } else if (charCode >= 48 && charCode <= 57) {
+                        // number
+                        codeToSend = charCode;
+                    } else if (charCode == 32) {
+                        // space
+                        codeToSend = 32;
+                    }
+
+console.log( "          Risultato: ", text[i], charCode, codeToSend);
+
+          setTimeout(pressKey, i * 100, codeToSend, true);
+          setTimeout(pressKey, (i + 1) * 100, codeToSend, false);
+        }
+
+      }
+
+
+
+//// debug/testing //////
+
+var keyCodes = [];
+            keyCodes[36] = 64; // $
+            keyCodes[37] = 37; // %
+            keyCodes[38] = 38; // &
+            keyCodes[39] = 39; // '
+            keyCodes[40] = 40; // (
+            keyCodes[41] = 41; // )
+            keyCodes[43] = 43; // +
+            keyCodes[44] = 44; // ,
+            keyCodes[45] = 45; // -
+            keyCodes[46] = 46; // .
+            keyCodes[47] = 47; // /
+            keyCodes[58] = 42; // *
+            keyCodes[59] = 58; // :
+            keyCodes[60] = 60; // <
+            keyCodes[61] = 43; // +
+            keyCodes[62] = 62; // >
+            keyCodes[63] = 47; // ?
+            keyCodes[64] = 34; // "
+            keyCodes[91] = 91; // [
+            keyCodes[92] = 92; // \
+            keyCodes[93] = 93; // ]
+            keyCodes[94] = 63; // ^
+            keyCodes[95] = 95; // _
+            keyCodes[96] = 96; // `
+            keyCodes[123] = 123; // {
+            keyCodes[124] = 92; // \
+            keyCodes[125] = 125; // }
+            keyCodes[126] = 35; // #
+
+
+const shiftKeyCodes = {
+  65: 65, // A
+  49: 33, // 1 -> !
+  50: 64, // 2 -> @
+  // altri tasti...
+};
+
+function sendKeyCode(keyCode) {
+  var shiftedKeyCode = shiftKeyCodes[keyCode] || keyCode;
+  var finalKeyCode = keyCodes[shiftedKeyCode] || shiftedKeyCode;
+  console.log(shiftedKeyCode,finalKeyCode);/*
+  Module.ccall('keyboard_key_pressed', 'undefined', ['number'], [16]); // pressione del tasto Shift
+  Module.ccall('keyboard_key_pressed', 'undefined', ['number'], [finalKeyCode]);
+  Module.ccall('keyboard_key_released', 'undefined', ['number'], [finalKeyCode]);
+  Module.ccall('keyboard_key_released', 'undefined', ['number'], [16]); // rilascio del tasto Shift*/
+}
+
+
+function printPippo() {
+  //chars = [63,32,50,16,9,16,16,15,50,13];
+  TTT=100;
+  chars = [64,65];
+    for (i=0; i< chars.length; i++) {
+      c=keyCodes[chars[i]];
+      p=(i-0)*4;
+      setTimeout(pressShift, p*TTT,p*TTT);
+      setTimeout(pressKey, (p+1)*TTT, c, true,(p+1)*TTT);
+      setTimeout(pressKey, (p+2)*TTT, c, false,(p+2)*TTT);
+      setTimeout(releaseShift, (p+3)*TTT,(p+3)*TTT);
+  }
+}
+
+
+      function pressShift(a) {
+console.log("         SHIFT",a);
+          Module.ccall('keyboard_key_pressed', 'undefined', ['number'], [16]);
+      }
+
+      function releaseShift(a) {
+console.log("         NO SHIFT",a);
+          Module.ccall('keyboard_key_released', 'undefined', ['number'], [16]);
+      }
+
+
+      function pressKey(keyCode, isPressed,a) {
+console.log("          Press:",keyCode, isPressed,a);
+        if (isPressed) {
+          Module.ccall('keyboard_key_pressed', 'undefined', ['number'], [keyCode]);
+        } else {
+          Module.ccall('keyboard_key_released', 'undefined', ['number'], [keyCode]);
+        }
+      }
+    </script>
+    <script type="text/javascript" src="js/x64.js"></script>
+  </body>
+</html>
